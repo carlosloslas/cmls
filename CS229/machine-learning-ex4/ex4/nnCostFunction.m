@@ -51,8 +51,8 @@ a1 = [ones(m,1) X];
 %disp(size(a1));
 %disp(size(Theta1));
 z2 = Theta1 * a1';
-disp('size of z2');
-disp(size(z2));
+%disp('size of z2');
+%disp(size(z2));
 a2 = [ones(1,m); sigmoid(z2)];
 %disp('size of a2, Theta2');
 %disp(size(a2));
@@ -102,24 +102,38 @@ J = 1/m * sum(j_m) + lambda/(2 * m) * reg_term; % regularized cost function
 %         Hint: We recommend implementing backpropagation using a for-loop
 %               over the training examples if you are implementing it for the
 %               first time.
-
-disp(size(Theta1_grad));
-disp(size(y_binary));
-disp(size(h_theta));
-
-%y_binary
-%h_theta
-
-%m=2;
-Delta =
-for i=1:m
-  delta3 = y_binary(i,:)' - h_theta(i,:)';
-  delta2 = Theta2' * delta3 .* [ones(1,m); sigmoidGradient(z2)];
+Delta1 = 0;
+Delta2 = 0;
+for t=1:m
+  % Forward propagation step
+  % ------------------------
+  a1 = [1, X(t, :)]'; %a1, size(i+1,1) (i=#Features). + bias unit on the input layer
+  % disp(size(a1));
+  z2 = Theta1 * a1 ; %z2, size(j_2,1) (j_2=#HiddenNeurons or #Neurons@layer2)
+  % disp(size(z2));
+  a2 = [1; sigmoid(z2)]; %a2, size(j+1,1). + bias unit in the input layer
+  % disp(size(a2));
+  z3 = Theta2 * a2; %z3, size(j_3,1) (j_3=#OutputNeurons or #Neurons@layer3)
+  % disp(size(z3));
+  a3 = sigmoid(z3); %a3, size(j_3,1). No bias unit on output layer
+  % Calculation of error terms
+  % --------------------------
+  delta3 = a3 - y_binary(t,:)'; %delta3, size(j_3,1)
+  % disp(size(delta3));
+  delta2 = Theta2' * delta3 .* [1; sigmoidGradient(z2)]; %delta2, size(j_2,1)
+  % disp(size(delta2));
+  % Accumulating gradient terms
+  % ---------------------------
+  Delta1 = Delta1 + delta2 * a1';
+  Delta2 = Delta2 + delta3 * a2';
+  % disp(size(Delta1));
+  % disp(size(Delta2));
 end
 
-
-Theta1_grad;
-Theta2_grad;
+Theta1_grad = 1/m .* Delta1(2:end,:);
+Theta2_grad = 1/m .* Delta2(:,1:end);
+% disp(size(Theta1_grad));
+% disp(size(Theta2_grad));
 
 %
 % Part 3: Implement regularization with the cost function and gradients.
@@ -130,23 +144,13 @@ Theta2_grad;
 %               and Theta2_grad from Part 2.
 %
 
+reg_term_theta1 = lambda/m .* [zeros(hidden_layer_size,1) Theta1(:,2:end)];
+reg_term_theta2 = lambda/m .* [zeros(num_labels,1) Theta2(:,2:end)];
+% disp(size(reg_term_theta1));
+% disp(size(reg_term_theta2));
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Theta1_grad = Theta1_grad + reg_term_theta1;
+Theta2_grad = Theta2_grad + reg_term_theta2;
 
 % -------------------------------------------------------------
 
@@ -154,6 +158,7 @@ Theta2_grad;
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
+%disp(size(grad));
 
 
 end
