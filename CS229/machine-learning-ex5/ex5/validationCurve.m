@@ -35,7 +35,7 @@ for i = 1:length(lambda_vec)
     % and error_val(i)
     %
     [x,y] = learningCurve(X, y, Xval, yval, lambda)
-    [error_train(i), error_val(i)] = learningCurve(X, y, Xval, yval, lambda);
+    %[error_train(i), error_val(i)] = learningCurve(X, y, Xval, yval, lambda)
 end
 
 % =========================================================================
