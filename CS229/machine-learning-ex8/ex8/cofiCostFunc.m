@@ -40,23 +40,29 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+J = (1/2 * sum((((X*Theta' - Y).^2).*R)(:)) );
+J = J + (lambda/2 * sum(Theta(:).^2)) + (lambda/2 * sum(X(:).^2)); % regularised cost
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+X_grad = ((X*Theta'-Y).*R)*Theta;
+X_grad = X_grad + lambda.*X; % regularised X gradient
+Theta_grad = ((X*Theta'-Y).*R)'*X;
+Theta_grad = Theta_grad + lambda.*Theta; % regularised Theta gradient
 
 % =============================================================
 
 grad = [X_grad(:); Theta_grad(:)];
 
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
